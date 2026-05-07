@@ -59,7 +59,7 @@ const agregarAlCarrito = async (producto) => {
               onClick={() => agregarAlCarrito(p)}
             >
               <div className="nombre">{p.nombre}</div>
-              <div className="precio">${p.precio.toFixed(2)}</div>
+              <div className="precio">${p.precio}</div>
             </button>
           ))}
         </div>
@@ -88,7 +88,7 @@ const agregarAlCarrito = async (producto) => {
                 carrito.map(p => (
                   <div key={p.id_detalle} className="item-carrito">
                     <span>{p.nombre}</span>
-                    <span className="precio">${p.precio.toFixed(2)}</span>
+                    <span className="precio">${p.precio}</span>
                     <button
                       className="btn-remover"
                       onClick={() => removerDelCarrito(p.id_detalle)}

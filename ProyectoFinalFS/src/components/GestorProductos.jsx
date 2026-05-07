@@ -109,7 +109,7 @@ export default function GestorProductos() {
               <tr key={p.id_producto}>
                 <td>{p.nombre}</td>
                 <td>{p.descripcion}</td>
-                <td>${p.precio.toFixed(2)}</td>
+                <td>${p.precio}</td>
                 <td>
                   <button className="btn-pequeño btn-azul" onClick={() => editar(p)}>
                     ✎ Editar
