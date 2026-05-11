@@ -1,9 +1,14 @@
-import { useState, useEffect } from 'react';
-import APIService from '../services/apiService';
+import { useState, useEffect } from "react";
+import APIService from "../services/apiService";
 
 export default function PanelComandas({ rol }) {
   const [pedidos, setPedidos] = useState([]);
-  const [filtroEstado, setFiltroEstado] = useState('pendiente');
+  const [filtroEstado, setFiltroEstado] = useState("pendiente");
+
+  const cargarPedidos = async () => {
+    const datos = await APIService.getPedidos(filtroEstado);
+    setPedidos(datos);
+  };
 
   useEffect(() => {
     cargarPedidos();
@@ -11,20 +16,15 @@ export default function PanelComandas({ rol }) {
     return () => clearInterval(interval);
   }, [filtroEstado]);
 
-  const cargarPedidos = async () => {
-    const datos = await APIService.getPedidos(filtroEstado);
-    setPedidos(datos);
-  };
-
   const cambiarEstado = async (id, nuevoEstado) => {
     await APIService.cambiarEstadoPedido(id, nuevoEstado);
     cargarPedidos();
   };
 
   const estadosSiguientes = {
-    'pendiente': 'en_proceso',
-    'en_proceso': 'listo',
-    'listo': 'completado'
+    pendiente: "en_proceso",
+    en_proceso: "listo",
+    listo: "completado",
   };
 
   return (
@@ -32,10 +32,10 @@ export default function PanelComandas({ rol }) {
       <h2>📊 Panel de Comandas</h2>
 
       <div className="filtros">
-        {['pendiente', 'en_proceso', 'listo', 'completado'].map(estado => (
+        {["pendiente", "en_proceso", "listo", "completado"].map((estado) => (
           <button
             key={estado}
-            className={`btn-filtro ${filtroEstado === estado ? 'activo' : ''}`}
+            className={`btn-filtro ${filtroEstado === estado ? "activo" : ""}`}
             onClick={() => setFiltroEstado(estado)}
           >
             {estado.toUpperCase()}
@@ -47,30 +47,43 @@ export default function PanelComandas({ rol }) {
         {pedidos.length === 0 ? (
           <p className="sin-pedidos">Sin pedidos en estado: {filtroEstado}</p>
         ) : (
-          pedidos.map(pedido => (
+          pedidos.map((pedido) => (
             <div key={pedido.id_pedido} className="tarjeta-comanda">
               <div className="encabezado">
                 <strong>#{pedido.id_pedido}</strong>
-                <span className={`estado ${pedido.estado}`}>{pedido.estado.toUpperCase()}</span>
+                <span className={`estado ${pedido.estado}`}>
+                  {pedido.estado.toUpperCase()}
+                </span>
               </div>
 
               <div className="contenido">
-                <p><strong>Total:</strong> ${pedido.total.toFixed(2)}</p>
-                <p><strong>Fecha:</strong> {new Date(pedido.fecha).toLocaleTimeString()}</p>
+                <p>
+                  <strong>Total:</strong> ${pedido.total}
+                </p>
+                <p>
+                  <strong>Fecha:</strong>{" "}
+                  {new Date(pedido.fecha).toLocaleTimeString()}
+                </p>
               </div>
 
               <div className="detalles">
-                {pedido.detalles && pedido.detalles.map(d => (
-                  <div key={d.id_detalle} className="detalle-item">
-                    x{d.cantidad} - ${(d.subtotal).toFixed(2)}
-                  </div>
-                ))}
+                {pedido.detalles &&
+                  pedido.detalles.map((d) => (
+                    <div key={d.id_detalle} className="detalle-item">
+                      x{d.cantidad} - ${d.subtotal}
+                    </div>
+                  ))}
               </div>
 
-              {rol === 'barista' && pedido.estado !== 'completado' && (
+              {rol === "barista" && pedido.estado !== "completado" && (
                 <button
                   className="btn-grande btn-verde"
-                  onClick={() => cambiarEstado(pedido.id_pedido, estadosSiguientes[pedido.estado])}
+                  onClick={() =>
+                    cambiarEstado(
+                      pedido.id_pedido,
+                      estadosSiguientes[pedido.estado],
+                    )
+                  }
                 >
                   SIGUIENTE ESTADO →
                 </button>

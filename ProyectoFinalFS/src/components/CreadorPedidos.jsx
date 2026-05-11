@@ -101,7 +101,7 @@ const agregarAlCarrito = async (producto) => {
             </div>
 
             <div className="total">
-              <strong>Total: ${total.toFixed(2)}</strong>
+              <strong>Total: ${total}</strong>
             </div>
 
             <div className="botones-accion">
